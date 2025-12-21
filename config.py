@@ -1,0 +1,1 @@
+UNSPLASH_API_KEY = "gcAVNvS14dxgToYDfEwawxZbw2jD1QUSolHDxtaGShQ"
