@@ -44,3 +44,58 @@ class NailInspirationApp:
     )
     title.pack(pady=20)
 
+    # Instructions for the user
+    instructions = tk.Label(
+        self.root,
+        text="Choose a season to get a nail inspiration picture!",
+        font=('Arial', 12),
+        bg='#f5f5f5',
+        fg='#666'
+    )
+    instructions.pack(pady=10)
+
+    # Holds all season buttons in a row
+    button_frame = tk.Frame(self.root, bg='#f5f5f5')
+    button_frame.pack(pady=20)
+
+    # The color and emoji for each button of each season
+    seasons = {
+      'Summer': {'color': '#FF6B6B', 'emoji': '☀️'},
+      'Fall': {'color':'#FF8C00', 'emoji': '🍂'},
+      'Winter': {'color': '#4682B4', 'emoji': '❄️'},
+      'Spring': {'color': '#98D8C8', 'emoji': '🌸'}
+    }
+
+    # Loop through the seasons and make a button for each one of them
+    for season, info in seasons.items():
+      btn = tk.Button(
+          button_frame,
+          text=info['emoji'] + " " + season,
+          font=('Arial', 14, 'bold'),
+          bg=info['color'],
+          fg='white',
+          width=12,
+          height=2,
+          relief='raised',
+          cursor='hand2',
+          command=lambda s=season.lower(): self.get_nail_inspiration(s)
+      )
+      btn.pack(side='left', padx=10)
+
+      self.image_label = tk.Label(
+          self.image_frame,
+          text="Click a button to see an inspiration from that season",
+          font=('Arial', 14),
+          bg='white',
+          fg='#999'
+      )
+      self.image_label.pack(expand=True)
+
+      self.credit_label = tk.Label(
+          self.root,
+          text="",
+          font=('Arial', 9),
+          bg='#f5f5f5',
+          fg='#666'
+      )
+      self.credit_label.pack(pady=10)
