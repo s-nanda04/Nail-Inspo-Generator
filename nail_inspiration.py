@@ -78,7 +78,7 @@ class NailInspirationApp:
           height=2,
           relief='raised',
           cursor='hand2',
-          command=lambda s=season.lower(): self.get_nail_inspiration(s)
+          command=lambda s=season.lower(): self.get_nail_inspo(s)
       )
       btn.pack(side='left', padx=10)
 
@@ -99,3 +99,48 @@ class NailInspirationApp:
           fg='#666'
       )
       self.credit_label.pack(pady=10)
+
+  def get_nail_inspo(self, season):
+    self.image_label.config(text=f"Loading {season} inspiration...")
+    self.root.update()
+    try:
+      #pick a random search term
+      search_term = random.choice(self.season_terms[season])
+
+      url = "https://api.unsplash.com/photos/random"
+      params = {
+        'query': search_term,
+        'client_id': self.UNSPLASH_API_KEY,
+        'orientation': 'portrait'
+      }
+
+      #send a request to Unsplash
+      response = requests.get(url, params=params)
+      response.raise_for_status()
+
+      #get the photo data from the API
+      data = response.json()
+      image_url = data['url']['regular']
+      photographer = data['user']['name']
+
+      #download the image
+      img_response = requests.get(image_url)
+      img_response.raise_for_status()
+
+      img = Image.open(BytesIO(img_response.content))
+
+      img.thumbnail((700, 600), Image.Resampling.LANCZOS)
+
+      photo = ImageTk.PhotoImage(img)
+
+      self.image_label.config(image=photo, text="")
+      self.image_label.image = photo
+
+      self.credit_label.config(text=f"Photo by {photographer} on Unsplash")
+
+    except requests.exceptions.RequestException as e:
+      messagebox.showerror("Error", f"failed to fetch image: {str(e)}")
+      self.image_label.config(text="Failed to load the image.")
+    except Exception as e:
+      messagebox.showerror("Error", f"Error occured: {str(e)}")
+      self.image_label.config(text="An error occurred")
