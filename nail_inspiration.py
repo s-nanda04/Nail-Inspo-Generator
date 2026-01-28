@@ -24,10 +24,10 @@ class NailInspirationApp:
 
     #search terms for each season that will be entered to the database to search for an inspiration picture
     self.season_terms = {
-      'summer': ['summer nails', 'tropical nail art', 'beach nails'],
-      'fall': ['autumn nails', 'fall nail art', 'burgundy nails', 'cozy nails'],
-      'winter': ['winter nails', 'holiday nail art', 'snowflake nails', 'festive nails'],
-      'spring': ['spring nails', 'floral nail art', 'pastel nails', 'garden nails']
+      'summer': ['summer', 'tropical', 'beach'],
+      'fall': ['autumn', 'fall', 'burgundy', 'warm color'],
+      'winter': ['winter', 'holiday', 'snowflake', 'festive'],
+      'spring': ['spring', 'floral', 'pastel', 'garden']
     }
 
     self.UNSPLASH_API_KEY = UNSPLASH_API_KEY
@@ -58,6 +58,9 @@ class NailInspirationApp:
     button_frame = tk.Frame(self.root, bg='#f5f5f5')
     button_frame.pack(pady=20)
 
+    self.image_frame = tk.Frame(self.root, bg='white', relief='solid', borderwidth=2)
+    self.image_frame.pack(pady=20, padx=40, fill='both', expand=True)
+
     # The color and emoji for each button of each season
     seasons = {
       'Summer': {'color': '#FF6B6B', 'emoji': '☀️'},
@@ -82,30 +85,30 @@ class NailInspirationApp:
       )
       btn.pack(side='left', padx=10)
 
-      self.image_label = tk.Label(
-          self.image_frame,
-          text="Click a button to see an inspiration from that season",
-          font=('Arial', 14),
-          bg='white',
-          fg='#999'
-      )
-      self.image_label.pack(expand=True)
+    self.image_label = tk.Label(
+        self.image_frame,
+        text="Click a button to see an inspiration from that season",
+        font=('Arial', 14),
+        bg='white',
+        fg='#999'
+    )
+    self.image_label.pack(expand=True)
 
-      self.credit_label = tk.Label(
-          self.root,
-          text="",
-          font=('Arial', 9),
-          bg='#f5f5f5',
-          fg='#666'
-      )
-      self.credit_label.pack(pady=10)
+    self.credit_label = tk.Label(
+        self.root,
+        text="",
+        font=('Arial', 9),
+        bg='#f5f5f5',
+        fg='#666'
+    )
+    self.credit_label.pack(pady=10)
 
   def get_nail_inspo(self, season):
     self.image_label.config(text=f"Loading {season} inspiration...")
     self.root.update()
     try:
       #pick a random search term
-      search_term = random.choice(self.season_terms[season])
+      search_term = random.choice(self.season_terms[season]) + " nail art manicure"
 
       url = "https://api.unsplash.com/photos/random"
       params = {
@@ -120,7 +123,7 @@ class NailInspirationApp:
 
       #get the photo data from the API
       data = response.json()
-      image_url = data['url']['regular']
+      image_url = data['urls']['regular']
       photographer = data['user']['name']
 
       #download the image
@@ -144,3 +147,11 @@ class NailInspirationApp:
     except Exception as e:
       messagebox.showerror("Error", f"Error occured: {str(e)}")
       self.image_label.config(text="An error occurred")
+
+def main():
+  root = tk.Tk()
+  app = NailInspirationApp(root)
+  root.mainloop()
+
+if __name__ == "__main__":
+  main()
