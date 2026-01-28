@@ -5,6 +5,7 @@ import requests
 from io import BytesIO
 import random
 from config import UNSPLASH_API_KEY
+from config import PEXELS_API_KEY
 
 # creates a blueprint for the app
 class NailInspirationApp:
@@ -24,13 +25,14 @@ class NailInspirationApp:
 
     #search terms for each season that will be entered to the database to search for an inspiration picture
     self.season_terms = {
-      'summer': ['summer', 'tropical', 'beach'],
-      'fall': ['autumn', 'fall', 'burgundy', 'warm color'],
-      'winter': ['winter', 'holiday', 'snowflake', 'festive'],
-      'spring': ['spring', 'floral', 'pastel', 'garden']
+      'summer': ['summer nails', 'tropical nails', 'beach nails'],
+      'fall': ['autumn nails', 'fall nails', 'burgundy nails'],
+      'winter': ['winter nails', 'holiday nails', 'snowflake nails', 'festive nails'],
+      'spring': ['spring nails', 'floral nails', 'pastel nails']
     }
 
     self.UNSPLASH_API_KEY = UNSPLASH_API_KEY
+    self.PEXELS_API_KEY = PEXELS_API_KEY
 
     self.setup_ui()
 
@@ -110,21 +112,32 @@ class NailInspirationApp:
       #pick a random search term
       search_term = random.choice(self.season_terms[season]) + " nail art manicure"
 
-      url = "https://api.unsplash.com/photos/random"
+      url = "https://api.pexels.com/v1/search"
+      headers = {
+        'Authorization': self.PEXELS_API_KEY
+      }
       params = {
         'query': search_term,
-        'client_id': self.UNSPLASH_API_KEY,
+        'per_page': 15,
+        'page': random.randint(1,10),
         'orientation': 'portrait'
       }
 
       #send a request to Unsplash
-      response = requests.get(url, params=params)
+      response = requests.get(url, headers=headers, params=params)
       response.raise_for_status()
 
       #get the photo data from the API
       data = response.json()
-      image_url = data['urls']['regular']
-      photographer = data['user']['name']
+
+      if not data['photos']:
+        messagebox.showinfo("No Results", f"No {season} nail photos found, Try again!")
+        self.image_label.config(text="No photos found, try again!")
+        return
+
+      photo_data = random.choice(data['photos'])
+      image_url = photo_data['src']['large']
+      photographer = photo_data['photographer']
 
       #download the image
       img_response = requests.get(image_url)
@@ -139,7 +152,7 @@ class NailInspirationApp:
       self.image_label.config(image=photo, text="")
       self.image_label.image = photo
 
-      self.credit_label.config(text=f"Photo by {photographer} on Unsplash")
+      self.credit_label.config(text=f"Photo by {photographer} on Pexels")
 
     except requests.exceptions.RequestException as e:
       messagebox.showerror("Error", f"failed to fetch image: {str(e)}")
