@@ -1,5 +1,5 @@
 # Seasonal Nail Inspiration Generator
-A python application that shows a random nail art inspiration picture based on the season the user selects, using Unspalsh API.
+A python application that shows a random nail art inspiration picture based on the season the user selects, using PEXEL API.
 
 ## Features
 - 🌞 Summer nail inspiration
@@ -12,8 +12,8 @@ A python application that shows a random nail art inspiration picture based on t
 ## Setup
 
 ### Prerequisites
-- Python 3.9
-- Unsplash API key 
+- Python 3.11
+- PEXEL API key 
 
 ## Usage
 1) Launch the application
@@ -25,4 +25,4 @@ A python application that shows a random nail art inspiration picture based on t
 - Python
 - Tkinter - GUI
 - Pillow
-- Unsplash API
+- PEXEL API
